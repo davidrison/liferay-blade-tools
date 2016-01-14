@@ -83,7 +83,7 @@ public class InitCommand {
 		try(ZipFile zip = new ZipFile(workspaceZip)) {
 			trace("Extracting workspace into destDir.");
 
-			unzip(workspaceZip, destDir, "META-INF/liferay-workspace/");
+			unzip(workspaceZip, destDir, "samples/");
 		} catch (IOException e) {
 			addError("Unable to unzip contents of workspace to dir: " + e.getMessage());
 			return;
@@ -146,7 +146,8 @@ public class InitCommand {
 					continue;
 				}
 
-				if (entry.isDirectory()) {
+				if (entry.isDirectory()
+						|| !entry.getName().startsWith(entryToStart)) {
 					continue;
 				}
 
