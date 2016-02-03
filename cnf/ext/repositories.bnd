@@ -1,4 +1,4 @@
-bnd-release=https://dl.bintray.com/bnd/dist/3.1.0/
+bnd-release=https://dl.bintray.com/bnd/dist/3.1.1/
 
 -pluginpath:\
         ${build}/cache/org.osgi.impl.bundle.repoindex.cli.jar;url=${bnd-release}/org.osgi.impl.bundle.repoindex.cli/org.osgi.impl.bundle.repoindex.cli-latest.jar
