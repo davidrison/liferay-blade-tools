@@ -2,10 +2,8 @@ package com.liferay.blade.cli;
 
 import aQute.bnd.header.Parameters;
 import aQute.bnd.osgi.Jar;
-
 import aQute.lib.getopt.Description;
 import aQute.lib.getopt.Options;
-
 import aQute.remote.api.Agent;
 import aQute.remote.api.Event;
 import aQute.remote.api.Supervisor;
@@ -16,9 +14,7 @@ import com.liferay.blade.cli.gradle.GradleExec;
 import com.liferay.blade.cli.gradle.GradleTooling;
 
 import java.io.File;
-
 import java.nio.file.Path;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -189,19 +185,28 @@ public class DeployCommand {
 	}
 
 	private String installOrUpdate(File outputFile) throws Exception {
+		final String outputFileName = outputFile.getName();
+
 		boolean isFragment = false;
 		String fragmentHost = null;
+		boolean isWar = false;
 		String bsn = null;
 
-		try(Jar bundle = new Jar(outputFile)) {
-			final Manifest manifest = bundle.getManifest();
-			final Attributes mainAttributes = manifest.getMainAttributes();
+		if (outputFileName.endsWith(".war")) {
+			isWar = true;
+			bsn = outputFileName.substring(0, outputFileName.indexOf(".war"));
+		}
+		else {
+			try(Jar bundle = new Jar(outputFile)) {
+				final Manifest manifest = bundle.getManifest();
+				final Attributes mainAttributes = manifest.getMainAttributes();
 
-			fragmentHost = mainAttributes.getValue("Fragment-Host");
+				fragmentHost = mainAttributes.getValue("Fragment-Host");
 
-			isFragment = fragmentHost != null;
+				isFragment = fragmentHost != null;
 
-			bsn = bundle.getBsn();
+				bsn = bundle.getBsn();
+			}
 		}
 
 		final DeploySupervisor supervisor = new DeploySupervisor(_blade);
@@ -224,6 +229,10 @@ public class DeployCommand {
 		String retval = null;
 
 		String bundleURL = outputFile.toURI().toASCIIString();
+
+		if (isWar) {
+			bundleURL = "webbundle:" + bundleURL + "?Web-ContextPath=/" + bsn;
+		}
 
 		if (existingId > 0) {
 			agent.stop(existingId);
