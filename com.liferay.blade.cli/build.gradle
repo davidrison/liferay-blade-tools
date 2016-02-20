@@ -18,6 +18,11 @@ repositories {
 
 apply plugin: "com.liferay.source.formatter"
 
+clean.doFirst {
+	delete "${projectDir}/deps.zip"
+	delete "${projectDir}/templates.zip"
+}
+
 formatSource {
 	baseDirName = "src"
 }
