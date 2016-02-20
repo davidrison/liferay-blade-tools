@@ -12,6 +12,9 @@ import javax.inject.Inject;
 import org.gradle.api.Plugin;
 import org.gradle.api.Project;
 import org.gradle.api.Task;
+import org.gradle.api.artifacts.Configuration;
+import org.gradle.api.artifacts.Dependency;
+import org.gradle.api.artifacts.PublishArtifactSet;
 import org.gradle.tooling.provider.model.ToolingModelBuilder;
 import org.gradle.tooling.provider.model.ToolingModelBuilderRegistry;
 
@@ -56,8 +59,18 @@ public class CustomModelPlugin implements Plugin<Project> {
             Set<File> outputFiles = new HashSet<File>();
 
             for (Task task : tasks) {
-                outputFiles.addAll(task.getOutputs().getFiles().getFiles());
+                Set<File> files = task.getOutputs().getFiles().getFiles();
+
+                outputFiles.addAll(files);
             }
+
+            Configuration archivesConfiguration =
+                project.getConfigurations().getByName(
+                    Dependency.ARCHIVES_CONFIGURATION);
+
+            PublishArtifactSet artifacts = archivesConfiguration.getArtifacts();
+
+            outputFiles.addAll(artifacts.getFiles().getFiles());
 
             return new DefaultModel(pluginClassNames, outputFiles);
         }
