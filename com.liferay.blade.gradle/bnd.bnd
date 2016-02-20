@@ -1,4 +1,5 @@
 -sub: *.bnd
 -buildpath: \
+	groovy,\
 	javax.inject,\
 	org.gradle.toolingapi
